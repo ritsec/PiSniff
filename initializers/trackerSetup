@@ -13,3 +13,8 @@ usermod --expiredate 1 pi
 # Change ssh default port:
 cat /etc/ssh/sshd_config | grep -v "#Port 22" > /etc/ssh/sshd_config
 echo "Port 49222" >> /etc/ssh/sshd_config"
+
+# Update the system:
+apt-get update
+apt-get upgrade -y
+apt-get install vim git scp wget python3 python3-pip tmux -y
