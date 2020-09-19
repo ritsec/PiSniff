@@ -1,0 +1,15 @@
+# Set hostname:
+echo -e "Enter the Pi's number (for the hostname):"
+read trackerNumber
+hostnamectl set-hostname "tracker${trackerNumber}"
+
+# Add tracker user:
+yes "" | adduser tracker --disabled-password || true
+
+# Expire pi user:
+passwd -l pi
+usermod --expiredate 1 pi
+
+# Change ssh default port:
+cat /etc/ssh/sshd_config | grep -v "#Port 22" > /etc/ssh/sshd_config
+echo "Port 49222" >> /etc/ssh/sshd_config"
