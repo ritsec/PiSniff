@@ -1,4 +1,5 @@
 import pyshark
+import bluetooth
 
 
 def wifi():
@@ -10,5 +11,7 @@ def wifi():
 	capture.apply_on_packets(processPacket)
 
 
-def bluetooth():
-	pass
+def bluetooth_sniff():
+	devices = bluetooth.discover_devices(lookup_names=True)
+	for addr,name in devices:
+		print(addr,name)
