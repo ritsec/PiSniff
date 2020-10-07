@@ -1,4 +1,4 @@
-# How to Connect Raspberry Pi Zero W to WPA2 Enterprise Network
+# How to Connect Raspberry Pi Zero W to WPA2 Enterprise Network with USB NIC
 #### Step 1: Edit /etc/network/interfaces
 ```
 auto lo
