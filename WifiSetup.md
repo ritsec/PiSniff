@@ -145,9 +145,11 @@ iface wlan0 inet dhcp
 
 
 #### Step 12: Disable the onboard wifi then reboot
-```sudo su```
-```echo "dtoverlay=disable-wifi" >> /boot/config.txt```
-```reboot now```
+```
+sudo su
+echo "dtoverlay=disable-wifi" >> /boot/config.txt
+reboot now
+```
 
 ### Step 13: Connect to Pi on SSH through the USB NIC
 Once the pi is booted connect to the pi using the same command from step 9 ```ssh tracker@{your_pi_ip_from_step_6} -p 49222``` except replace the ip with the new hostname ```ssh tracker@tracker{#}.student.rit.edu -p 49222```
