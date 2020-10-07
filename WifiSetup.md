@@ -117,11 +117,26 @@ Now we can setup the USB NIC!
 You should see wlan0 and wlan1 both connected to RIT, this is good.
 
 ```ip a```
+You should see the mac address for wlan1 on the line that says ```link/ether xx:xx:xx:xx:xx:xx```
+
+On your desktop navigate to start.rit.edu
+
+Click on "My Computers", then "Advanced Registration"
+
+Type in the mac address from before and click register, it should be successful. Now give it a hostname (preferably tracker{#}) and fill in the additional information.
+
+You should now be able to connect to the pi using the hostname tracker{#}.student.rit.edu instead of the dynamic IP that we won't know unless we have access to the pi.
 
 
-#### Step 9: Disable the onboard wifi
+#### Step 9: Disable the onboard wifi then reboot
 ```sudo su```
 ```echo "dtoverlay=disable-wifi" >> /boot/config.txt```
+```reboot now```
+
+### Step 10: Connect to Pi on SSH through the USB NIC
+Once the pi is booted connect to the pi using the same command from step 9 ```ssh tracker@{your_pi_ip_from_step_6} -p 49222``` except replace the ip with the new hostname ```ssh tracker@tracker{#}.student.rit.edu -p 49222```
+
+### Done!
 
 
 
