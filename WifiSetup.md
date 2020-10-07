@@ -127,13 +127,29 @@ Type in the mac address from before and click register, it should be successful.
 
 You should now be able to connect to the pi using the hostname tracker{#}.student.rit.edu instead of the dynamic IP that we won't know unless we have access to the pi.
 
+#### Step 11: Remove wlan1 from /etc/network/interface (revert step 8 back to step 1)
+Restore ```/etc/network/interface``` to step 1 configuration (remove all wlan1 entries)
+```
+auto lo
 
-#### Step 9: Disable the onboard wifi then reboot
+iface lo inet loopback
+iface eth0 inet dhcp
+
+allow-hotplug wlan0
+
+iface wlan0 inet dhcp
+        pre-up wpa_supplicant -B -Dwext -i wlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf
+        post-down killall -q wpa_supplicant
+```
+
+
+
+#### Step 12: Disable the onboard wifi then reboot
 ```sudo su```
 ```echo "dtoverlay=disable-wifi" >> /boot/config.txt```
 ```reboot now```
 
-### Step 10: Connect to Pi on SSH through the USB NIC
+### Step 13: Connect to Pi on SSH through the USB NIC
 Once the pi is booted connect to the pi using the same command from step 9 ```ssh tracker@{your_pi_ip_from_step_6} -p 49222``` except replace the ip with the new hostname ```ssh tracker@tracker{#}.student.rit.edu -p 49222```
 
 ### Done!
