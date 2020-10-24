@@ -22,9 +22,7 @@ This will put a has appended to your ```wpa_supplicant.conf``` file which you ca
 
 #### Step 3: Edit /etc/wpa_supplicant/wpa_supplicant.conf
 ```
-sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
-
-network = {
+network={
 	ssid="RIT"
 	key_mgmt=WPA-EAP
 	eap=PEAP
