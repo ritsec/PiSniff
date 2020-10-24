@@ -26,7 +26,7 @@ network={
 	ssid="RIT"
 	key_mgmt=WPA-EAP
 	eap=PEAP
-	identity={username}
+	identity="{username}"
 	phase1="peaplabel=0"
 	phase2="auth=MSCHAPV2"
 	priority=1
@@ -37,10 +37,7 @@ network={
 #### Step 4: Reboot Pi
 ```sudo reboot now```
 
-#### Step 5: Check connection
-```ping 8.8.8.8```
-
-#### Step 6: Get IP of wlan0 (internal NIC) to connect using ssh
+#### Step 5: Get IP/MAC of wlan0 (internal NIC)
 ```
 tracker@tracker4:~$ ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
@@ -59,60 +56,9 @@ tracker@tracker4:~$ ip a
        valid_lft forever preferred_lft forever
 ```
 
-The ip you will get from from looking at wlan0's inet address which in this case is ```129.21.66.204```
+The mac you will get from from looking at wlan0's link/ether which in this case is ```9c:ef:d5:fa:12:e4```
 
-Record this because you will need it to SSH into the pi after the next step.
-
-#### Step 7: Add your ssh public key to the pi so you can connect
-1. Open PowerShell in your home directory
-2. ```ssh-keygen -t ed25519```
-3. It may ask you to enter a password to be used with the key, use at your own discretion.
-3. This should generate a public and private key named (by default) as ```id_ed25519``` and ```id_ed25519.pub```
-4. Upload your public key ```id_ed25519.pub``` to pastebin.com
-5. On the pi navigate to your .ssh directory ```cd ~/.ssh```
-6. On your pi now run ```wget https://pastebin.com/raw/{your_pastebin_code}``` which will download your public key to a file named ```{your_pastebin_code}```
-7. Now, append the downloaded public key file to the ```authorized_keys``` file using ```cat {your_pastebin_code} >> authorized_keys```
-8. Remove the newline at the end of ```authorized_keys``` using ```nano authorized_keys``` and remove the newline from the end of the file and save it.
-9. Now your pi is ready for SSH!
-
-#### Step 8: Modify /etc/network/interfaces to add wlan1 temporarily to setup USB NIC
-Add a repeat of what you wrote for wlan0 except replace all instances of wlan0 with wlan1.
-Your file should look like this:
-```
-auto lo
-
-iface lo inet loopback
-iface eth0 inet dhcp
-
-allow-hotplug wlan0
-allow-hotplug wlan1
-
-iface wlan0 inet dhcp
-        pre-up wpa_supplicant -B -Dwext -i wlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf
-        post-down killall -q wpa_supplicant
-	
-iface wlan1 inet dhcp
-        pre-up wpa_supplicant -B -Dwext -i wlan1 -c/etc/wpa_supplicant/wpa_supplicant.conf
-        post-down killall -q wpa_supplicant
-```
-
-
-#### Step 9: Shutdown the pi and SSH into it from another computer
-```shutdown now```
-
-Now plug the USB NIC into the USB port instead of your keybord.
-
-When done, unplug then plug back in your pi power supply to power on the pi again.
-
-When it is done booting up you should be able to ssh into the pi from your personal computer.
-
-Connect using ```ssh tracker@{your_pi_ip_from_step_6} -p 49222``` (Note: the port should already be set to 49222, but if that doesn't work just use ssh without the ```-p 49222```
-
-You should now be connected to the pi.
-
-Now we can setup the USB NIC!
-
-#### Step 10: Register NIC with start.rit.edu so we can use a hostname from now on instead of the dynamic IP
+#### Step 6: Register NIC with start.rit.edu so we can use a hostname from now on instead of the dynamic IP
 ```iwconfig```
 You should see wlan0 and wlan1 both connected to RIT, this is good.
 
@@ -127,32 +73,35 @@ Type in the mac address from before and click register, it should be successful.
 
 You should now be able to connect to the pi using the hostname tracker{#}.student.rit.edu instead of the dynamic IP that we won't know unless we have access to the pi.
 
-#### Step 11: Remove wlan1 from /etc/network/interface (revert step 8 back to step 1)
-Restore ```/etc/network/interface``` to step 1 configuration (remove all wlan1 entries)
-```
-auto lo
+Reboot the pi using ```sudo reboot now``` then you should have internet.
 
-iface lo inet loopback
-iface eth0 inet dhcp
+#### Step 7: Add your ssh public key to the pi so you can connect
+1. Open PowerShell in your home directory
+2. ```ssh-keygen -t ed25519```
+3. It may ask you to enter a password to be used with the key, use at your own discretion.
+3. This should generate a public and private key named (by default) as ```id_ed25519``` and ```id_ed25519.pub```
+4. Upload your public key ```id_ed25519.pub``` to pastebin.com
+5. On the pi navigate to your .ssh directory ```cd ~/.ssh```
+6. On your pi now run ```wget https://pastebin.com/raw/{your_pastebin_code}``` which will download your public key to a file named ```{your_pastebin_code}```
+7. Now, append the downloaded public key file to the ```authorized_keys``` file using ```cat {your_pastebin_code} >> authorized_keys```
+8. Remove the newline at the end of ```authorized_keys``` using ```nano authorized_keys``` and remove the newline from the end of the file and save it.
+9. Now your pi is ready for SSH!
 
-allow-hotplug wlan0
+#### Step 8: Shutdown the pi and SSH into it from another computer
+```shutdown now```
 
-iface wlan0 inet dhcp
-        pre-up wpa_supplicant -B -Dwext -i wlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf
-        post-down killall -q wpa_supplicant
-```
+Now plug the USB NIC into the USB port instead of your keybord.
 
+When done, unplug then plug back in your pi power supply to power on the pi again.
 
+When it is done booting up you should be able to ssh into the pi from your personal computer.
 
-#### Step 12: Disable the onboard wifi then reboot
-```
-sudo su
-echo "dtoverlay=disable-wifi" >> /boot/config.txt
-reboot now
-```
+Connect using ```ssh tracker@{your_pi_ip_from_step_6} -p 49222``` (Note: the port should already be set to 49222, but if that doesn't work just use ssh without the ```-p 49222```
 
-### Step 13: Connect to Pi on SSH through the USB NIC
-Once the pi is booted connect to the pi using the same command from step 9 ```ssh tracker@{your_pi_ip_from_step_6} -p 49222``` except replace the ip with the new hostname ```ssh tracker@tracker{#}.student.rit.edu -p 49222```
+You should now be connected to the pi.
+
+Now we can setup the USB NIC!
+
 
 ### Done!
 
